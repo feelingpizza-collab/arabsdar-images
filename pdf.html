@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>عرض وطباعة الصورة PDF</title>
+  <title>www.arabsdar.net</title>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <style>
     * { box-sizing: border-box; }
@@ -25,6 +25,16 @@
       padding: 20px;
       box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
       text-align: center;
+    }
+    .site-badge {
+      display: inline-block;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #2563eb;
+      background: #eff6ff;
+      padding: 6px 14px;
+      border-radius: 999px;
     }
     .actions {
       display: flex;
@@ -60,29 +70,52 @@
       font-size: 14px;
       color: #475569;
     }
+    .back-home {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 14px;
+      color: #334155;
+    }
+    .back-home a {
+      color: #2563eb;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .back-home a:hover {
+      text-decoration: underline;
+    }
     @media print {
+      @page {
+        margin: 8mm;
+      }
       body { background: #fff; padding: 0; }
       .card { box-shadow: none; max-width: 100%; padding: 0; }
-      .actions, .status { display: none; }
+      .site-badge, .actions, .status, .back-home { display: none; }
       .preview-wrap img { border-radius: 0; box-shadow: none; }
     }
   </style>
 </head>
 <body>
   <div class="card">
+    <div class="site-badge">www.arabsdar.net</div>
     <div class="actions">
       <button class="btn-pdf" id="openPdfBtn" type="button">فتح PDF في المتصفح</button>
       <button class="btn-print" id="printBtn" type="button">طباعة الصورة</button>
     </div>
     <div class="preview-wrap">
-      <img id="targetImg" alt="معاينة الصورة" />
+      <img id="targetImg" alt="معاينة الصورة - www.arabsdar.net" />
     </div>
     <div class="status" id="statusMsg">جاري تحميل الصورة...</div>
+    <div class="back-home">
+      العودة إلى <a href="https://www.arabsdar.net" rel="noopener noreferrer">موقع دار العرب</a> لمزيد من الصور المميزة.
+    </div>
   </div>
 
   <script>
-    // عدّل مسار مجلد الصور حسب موقعك
-    const IMAGES_FOLDER = "./images";
+    const SITE_NAME = "www.arabsdar.net";
+    // البحث في نفس المجلد الموجود فيه ملف pdf.html
+    const IMAGES_FOLDER = ".";
     const ALLOWED_EXTS = ["webp", "jpg", "jpeg", "png"];
 
     const params = new URLSearchParams(window.location.search);
@@ -103,7 +136,7 @@
 
     function loadFirstAvailableImage(urls, index = 0) {
       if (index >= urls.length) {
-        statusEl.textContent = "تعذر العثور على الصورة المطلوبة.";
+        statusEl.textContent = "تعذر العثور على الصورة في نفس المجلد.";
         return;
       }
       const candidateUrl = urls[index];
@@ -112,8 +145,9 @@
       probe.onload = () => {
         imgEl.crossOrigin = "anonymous";
         imgEl.src = candidateUrl;
-        imgEl.alt = safeName;
-        statusEl.textContent = `الصورة جاهزة (${probe.naturalWidth} × ${probe.naturalHeight} px)`;
+        imgEl.alt = `${safeName} - ${SITE_NAME}`;
+        document.title = `${SITE_NAME} - ${safeName}`;
+        statusEl.textContent = `الصورة جاهزة (${probe.naturalWidth} × ${probe.naturalHeight} px) - ${SITE_NAME}`;
       };
       probe.onerror = () => loadFirstAvailableImage(urls, index + 1);
       probe.src = candidateUrl;
